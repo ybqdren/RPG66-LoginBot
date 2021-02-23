@@ -4,7 +4,7 @@
 <br>
 
 # 部署教程
-[橙光每日自动登录+微信自动提示：工具部署教程](https://blog.wenzhao18.top/index.php/java/66rpg-weichat-spider.html)
+暂定
 
 <br>
 
