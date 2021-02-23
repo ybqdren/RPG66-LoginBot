@@ -2,6 +2,7 @@ package io.ybqdren.github;
 
 import io.ybqdren.github.common.Base;
 import io.ybqdren.github.model.Message;
+import io.ybqdren.github.model.RequestHeaderModel;
 import io.ybqdren.github.model.StatusCodeModel;
 import io.ybqdren.github.send.LoginJob;
 import io.ybqdren.github.send.MessageSendJob;
@@ -17,13 +18,14 @@ import java.util.Properties;
  */
 
 public class Main extends Base {
-    public static String cookie = null;
-    public static String userAgent = null;
+    public static RequestHeaderModel requestHeaderModel = new RequestHeaderModel();
 
     public static void main(String[] args) throws IOException {
+        String cookie = requestHeaderModel.getCookie();
+        String userAgent = requestHeaderModel.getUserAgent();
         Message message = readConfig("userConfig.properties");
         if(!(cookieIsNull(cookie) && userAgentIsNull(userAgent))){
-            LoginJob.run(cookie,userAgent,message);
+            LoginJob.run(requestHeaderModel,message);
         }else{
             MessageSendJob.run(StatusCodeModel.NOCOOKIE_CODE,message);
         }
@@ -42,8 +44,12 @@ public class Main extends Base {
         Message message = new Message();
         String[] uids = {properties.getProperty("uids")};
 
-        cookie = properties.getProperty("Cookie");
-        userAgent = properties.getProperty("User-Agent");
+        requestHeaderModel.setCookie(properties.getProperty("Cookie"));
+        requestHeaderModel.setUserAgent(properties.getProperty("User-Agent"));
+        requestHeaderModel.setCacheControl(properties.getProperty("Cache-Control"));
+        requestHeaderModel.setPragma(properties.getProperty("Pragma"));
+        requestHeaderModel.setUpgradeInsecureRequests(properties.getProperty("Upgrade-Insecure-Requests"));
+        requestHeaderModel.setConnection(properties.getProperty("Connection"));
         message.setAppToken(properties.getProperty("appToken"));
         message.setUrl(properties.getProperty("url"));
         message.setUids(uids);

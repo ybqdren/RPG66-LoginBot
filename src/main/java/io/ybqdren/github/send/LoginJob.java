@@ -1,10 +1,7 @@
 package io.ybqdren.github.send;
 
 import io.ybqdren.github.common.Base;
-import io.ybqdren.github.model.Message;
-import io.ybqdren.github.model.ResponseMessageModel;
-import io.ybqdren.github.model.StatusCodeModel;
-import io.ybqdren.github.model.UserInforModel;
+import io.ybqdren.github.model.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -21,18 +18,21 @@ import java.io.IOException;
  */
 
 public class LoginJob extends Base {
-    public static void run(String cookie, String userAgent, Message message) throws IOException {
+    public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException {
+//        String urlHome = "http://www.66rpg.com/home/message";
         String userurl = "http://www.66rpg.com/home";
         String friendUrl = "http://www.66rpg.com/friend/";
         UserInforModel userInforModel = null;
         ResponseMessageModel responseMessageModel_01 = null;
         ResponseMessageModel responseMessageModel_02 = null;
+//        pageRequest(urlHome,cookie,userAgent);
+
         // get tow page info
-        responseMessageModel_01 = pageRequest(userurl,cookie,userAgent);
+        responseMessageModel_01 = pageRequest(userurl,requestHeaderModel);
         userInforModel = getUserInfo(responseMessageModel_01);
 
         if(!("".equals(userInforModel.getUid())) && userInforModel.getUid()!=null){
-            responseMessageModel_02 = pageRequest(friendUrl+userInforModel.getUid(),cookie,userAgent);
+            responseMessageModel_02 = pageRequest(friendUrl+userInforModel.getUid(),requestHeaderModel);
             if( responseMessageModel_02.getSendStatus() == 200){
                 userInforModel.setUrl(message.getUrl());
                 userInforModel = getUerInforOther(userInforModel,responseMessageModel_02.getRecContent());
@@ -73,6 +73,7 @@ public class LoginJob extends Base {
 
     /**
      * 获取用户信息
+     *
      * @param responseMessageModel
      * @return
      */
@@ -99,16 +100,21 @@ public class LoginJob extends Base {
 
     /**
      * get response
+     *
      * @param url
-     * @param cookie
-     * @param userAgent
+     * @param requestHeaderModel
      * @return
      * @throws IOException
      */
-    private static ResponseMessageModel pageRequest(String url, String cookie, String userAgent) throws IOException {
+    private static ResponseMessageModel pageRequest(String url,RequestHeaderModel requestHeaderModel) throws IOException {
         HttpGet httpGet = new HttpGet(url);
-        httpGet.addHeader("Cookie",cookie);
-        httpGet.addHeader("User-Agent",userAgent);
+        httpGet.addHeader("Cookie",requestHeaderModel.getCookie());
+        httpGet.addHeader("User-Agent",requestHeaderModel.getUserAgent());
+        httpGet.addHeader("Cache-Control",requestHeaderModel.getCacheControl());
+        httpGet.addHeader("Pragma",requestHeaderModel.getPragma());
+        httpGet.addHeader("Upgrade-Insecure-Requests",requestHeaderModel.getUpgradeInsecureRequests());
+        httpGet.addHeader("Connection",requestHeaderModel.getConnection());
+
         HttpClient httpClient = HttpClients.custom().build();
         HttpResponse response = httpClient.execute(httpGet);
         String recContent = null;
