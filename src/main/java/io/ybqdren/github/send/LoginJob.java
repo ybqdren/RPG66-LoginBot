@@ -15,21 +15,30 @@ import java.io.IOException;
 
 /**
  * Created by Zhao Wen on 2021/2/21
+ *
+ * 找到鲜花信息不更新的缘故了：
+ * 获取的鲜花信息是登录时抓的 肯定有延时性
+ *
+ * 应这样修改：
+ * 登录 -> 判断是否登录成功 记录当前获得的鲜花数 -> 在此请求用户信息页 获取鲜花数 -> 将两个进行比较 -> 如果上次登录时间非今天
+ * 且鲜花数 新请求大于原来数目 —> 登录成功
  */
 
 public class LoginJob extends Base {
     public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException {
-//        String urlHome = "http://www.66rpg.com/home/message";
         String userurl = "http://www.66rpg.com/home";
         String friendUrl = "http://www.66rpg.com/friend/";
         UserInforModel userInforModel = null;
-        ResponseMessageModel responseMessageModel_01 = null;
+        ResponseMessageModel responseMessageModelLogin = null;
+        ResponseMessageModel requestHeaderModelUserInfo = null;
         ResponseMessageModel responseMessageModel_02 = null;
-//        pageRequest(urlHome,cookie,userAgent);
 
         // get tow page info
-        responseMessageModel_01 = pageRequest(userurl,requestHeaderModel);
-        userInforModel = getUserInfo(responseMessageModel_01);
+        // login
+        responseMessageModelLogin = pageRequest(userurl,requestHeaderModel);
+        // get user information
+        requestHeaderModelUserInfo = pageRequest(userurl,requestHeaderModel);
+        userInforModel = getUserInfo(requestHeaderModelUserInfo);
 
         if(!("".equals(userInforModel.getUid())) && userInforModel.getUid()!=null){
             responseMessageModel_02 = pageRequest(friendUrl+userInforModel.getUid(),requestHeaderModel);
@@ -55,6 +64,12 @@ public class LoginJob extends Base {
         MessageSendJob.run(statusCode,message);
     }
 
+    /**
+     * get user lastime
+     * @param userInforModel
+     * @param resContent
+     * @return
+     */
     private static UserInforModel getUerInforOther(UserInforModel userInforModel,String resContent){
         Document document = Jsoup.parse(resContent);
         System.out.println(document.html());
@@ -63,10 +78,6 @@ public class LoginJob extends Base {
         // user lastlogin time
         String lastLogin = profileNode.select("div.profile").select("span:contains(上次登录时间)").text();
         userInforModel.setLastLogin(lastLogin);
-
-        // user total play-game time
-//        String totalTime = profileNode.select("div.profile").select("span#js_runtime_sum").text();
-//        userInforModel.setTotalTime(totalTime);
 
         return userInforModel;
     }

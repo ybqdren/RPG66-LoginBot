@@ -18,7 +18,7 @@ import java.net.URLEncoder;
  */
 
 public class MessageSendJob extends Base {
-    public static void run(String statusCode, Message message) throws IOException {
+    public static void run(String statusCode, Message message) throws IOException{
         String sendAPI = "http://wxpusher.zjiecode.com/api/send/message/";
         if(StatusCodeModel.SUCCESS_CODE.equals(statusCode)){
             successMessage(sendAPI,message);

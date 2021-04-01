@@ -69,6 +69,6 @@ public class UserInforModel {
                 "当前花数："+flowers+"\n"+
                 lastLogin+"\n"+
                 "\n"+
-                "教程/问题集中反馈页："+url;
+                "项目地址："+url;
     }
 }
