@@ -1,10 +1,11 @@
 name: rpg66-login-daily-task
     
 on:
-   push:
-   gollum:
-   schedule:
-       - cron: '24/5 * * * *'
+  push:
+    branches: [ main ]
+  schedule:
+    # 定时任务，在每天的11点执行任务
+    - cron: '11/5 * * * *'
        
 jobs:
   Rpg66Login:
