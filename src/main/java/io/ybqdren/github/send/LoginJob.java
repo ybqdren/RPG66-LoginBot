@@ -24,7 +24,7 @@ import java.io.IOException;
 public class LoginJob extends Base {
     public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException, InterruptedException {
         // 第一次请求url
-        String loginUrl = "http://c2.cgyouxi.com/website/orange/js/login_sign/login_sign.js?v=20170621";
+        String loginUrl = "http://www.66rpg.com/ajax/LoginSign/user_login_set.json";
 
         // 第二次请求url 获取当前用户鲜花数目信息
         String userUrl = "http://www.66rpg.com/home";
