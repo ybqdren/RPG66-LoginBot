@@ -6,6 +6,8 @@ import io.ybqdren.github.model.RequestHeaderModel;
 import io.ybqdren.github.model.StatusCodeModel;
 import io.ybqdren.github.send.LoginJob;
 import io.ybqdren.github.send.MessageSendJob;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -18,12 +20,22 @@ import java.util.Properties;
  */
 
 public class Main extends Base {
+    static Logger logger = LogManager.getLogger(Main.class);
+
     public static RequestHeaderModel requestHeaderModel = new RequestHeaderModel();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         String cookie = requestHeaderModel.getCookie();
         String userAgent = requestHeaderModel.getUserAgent();
         Message message = readConfig("userConfig.properties");
+
+        // 从参数中提取Cookie
+        if(args.length == 0){
+            logger.warn("请在Secrets中填写COOKIE");
+        }
+        requestHeaderModel.setCookie(args[0]);
+
+
         if(!(cookieIsNull(cookie) && userAgentIsNull(userAgent))){
             LoginJob.run(requestHeaderModel,message);
         }else{
@@ -44,7 +56,6 @@ public class Main extends Base {
         Message message = new Message();
         String[] uids = {properties.getProperty("uids")};
 
-        requestHeaderModel.setCookie(properties.getProperty("Cookie"));
         requestHeaderModel.setUserAgent(properties.getProperty("User-Agent"));
         requestHeaderModel.setCacheControl(properties.getProperty("Cache-Control"));
         requestHeaderModel.setPragma(properties.getProperty("Pragma"));

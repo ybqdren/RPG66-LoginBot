@@ -25,9 +25,15 @@ import java.io.IOException;
  */
 
 public class LoginJob extends Base {
-    public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException {
-        String userurl = "http://www.66rpg.com/home";
+    public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException, InterruptedException {
+        String loginUrl = "http://c2.cgyouxi.com/website/orange/js/login_sign/login_sign.js?v=20170621";
+        String userUrl = "http://www.66rpg.com/home";
         String friendUrl = "http://www.66rpg.com/friend/";
+
+        // 疑似领取鲜花的url http://c2.cgyouxi.com/website/orange/js/login_sign/login_sign.js?v=20170621
+        // 疑似检查用户登录信息 http://www.66rpg.com/ajax/LoginSign/user_login_set.json
+        // 每日任务 http://www.66rpg.com/ActiveSystem/index/get_today_task_lists
+
         UserInforModel userInforModel = null;
         ResponseMessageModel responseMessageModelLogin = null;
         ResponseMessageModel requestHeaderModelUserInfo = null;
@@ -35,9 +41,13 @@ public class LoginJob extends Base {
 
         // get tow page info
         // login
-        responseMessageModelLogin = pageRequest(userurl,requestHeaderModel);
+        responseMessageModelLogin = pageRequest(loginUrl,requestHeaderModel);
+
+        Thread.sleep(1000);
+
         // get user information
-        requestHeaderModelUserInfo = pageRequest(userurl,requestHeaderModel);
+        requestHeaderModelUserInfo = pageRequest(userUrl,requestHeaderModel);
+        System.out.println(requestHeaderModelUserInfo.getRecContent());
         userInforModel = getUserInfo(requestHeaderModelUserInfo);
 
         if(!("".equals(userInforModel.getUid())) && userInforModel.getUid()!=null){
