@@ -4,7 +4,7 @@ on:
     branches: [ master ]
   schedule:
     # 定时任务，在每天的11点执行任务
-    - cron: '0 3 * * *'
+    - cron: '5/2 * * * *'
 jobs:
   Rpg66Login:
 
