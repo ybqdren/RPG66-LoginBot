@@ -28,6 +28,7 @@ jobs:
         env:
           COOKIE: ${{ secrets.COOKIE }}
           REQUESTS_INFO: ${{ secrets.REQUESTS_INFO }}
-          WXPUSHER_CONFIG: ${{ secrets.WXPUSHER_CONFIG }}
+          APPTOKEN: ${{ secrets.APPTOKEN }}
+          UID: ${{ secrets.UID }}
         run: |
-          mvn compile exec:java -Dexec.mainClass="io.ybqdren.github.Main" -Dexec.args="${COOKIE} ${REQUESTS_INFO} ${WXPUSHER_CONFIG}"
+          mvn compile exec:java -Dexec.mainClass="io.ybqdren.github.Main" -Dexec.args="${COOKIE} ${REQUESTS_INFO} ${APPTOKEN} ${UID}"

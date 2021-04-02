@@ -36,13 +36,15 @@ public class Main extends Base {
         requestHeaderModel.setUserAgent(args[1]);
 
         // 设置请求的其他信息
-        String[] wxpusherInfo = args[2].split(",");
-        LOGGER.info("============================{}=============================",wxpusherInfo[0]);
+//        String[] wxpusherInfo = args[2].split(",");
+//        LOGGER.info("============================{}=============================",wxpusherInfo[0]);
         Message message = new Message();
 //        message.setAppToken(wxpusherInfo[0]);
 //        message.setUids(new String[]{wxpusherInfo[1]});
-        message.setUids(new String[]{"UID_Cm4JqDw8OYs7adsl1AwRkg6vG4DF"});
-        message.setAppToken("AT_R3oG2VwZ7vtaksqD6XEhXP5Fkgqwy6uK");
+//        message.setUids(new String[]{"UID_Cm4JqDw8OYs7adsl1AwRkg6vG4DF"});
+//        message.setAppToken("AT_R3oG2VwZ7vtaksqD6XEhXP5Fkgqwy6uK");
+        message.setAppToken(args[2]);
+        message.setUids(new String[]{args[3]});
 
         String cookie = requestHeaderModel.getCookie();
         String userAgent = requestHeaderModel.getUserAgent();
