@@ -6,7 +6,9 @@ on:
   schedule:
     # 每天早上6:10定时执行
     - cron: '0 22 * * *'
-  
+  watch:
+    types: started
+
   workflow_dispatch:
        
 jobs:
