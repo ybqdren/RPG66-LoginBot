@@ -37,7 +37,7 @@ public class Main extends Base {
 
         // 设置请求的其他信息
         String[] wxpusherInfo = args[2].split(",");
-        LOGGER.info("{},{}",wxpusherInfo[0],wxpusherInfo[1]);
+        LOGGER.info("{},{}",wxpusherInfo[0]);
         Message message = new Message();
 //        message.setAppToken(wxpusherInfo[0]);
 //        message.setUids(new String[]{wxpusherInfo[1]});
