@@ -24,9 +24,7 @@ import java.io.IOException;
 public class LoginJob extends Base {
     public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException, InterruptedException {
         // 第一次请求url
-        String loginUrl = "http://www.66rpg.com/ActiveSystem/index/get_today_task_lists";
-        
-        Thread.sleep(10000);
+        String loginUrl = "http://www.66rpg.com/home";
 
         // 第二次请求url 获取当前用户鲜花数目信息
         String userUrl = "http://www.66rpg.com/home";
