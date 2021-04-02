@@ -3,6 +3,8 @@ name: rpg66-login-daily-task
 on:
   push:
     branches: [ main ]
+  schedule:
+    - cron: '12/5 * * * *'
   
   workflow_dispatch:
        
