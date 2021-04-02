@@ -14,12 +14,14 @@ import java.io.IOException;
 import java.net.URLEncoder;
 
 /**
- * Created by Zhao Wen on 2021/2/21
+ *  Created by Zhao Wen on 2021/2/21
  */
 
 public class MessageSendJob extends Base {
+
     public static void run(String statusCode, Message message) throws IOException{
         String sendAPI = "http://wxpusher.zjiecode.com/api/send/message/";
+
         if(StatusCodeModel.SUCCESS_CODE.equals(statusCode)){
             successMessage(sendAPI,message);
         }else if(StatusCodeModel.FAILD_CODE.equals(statusCode) || StatusCodeModel.NOCOOKIE_CODE.equals(statusCode)){
@@ -27,11 +29,6 @@ public class MessageSendJob extends Base {
         }
     }
 
-    /**
-     * get fail
-     * @param url
-     * @param message
-     */
     private static void failMessage(String url,Message message) throws IOException{
         String content = "橙光自动登录失败";
         url=url+"?"+"appToken="+message.getAppToken()+"&content="+content+"&uid="+message.getUids()[0]+"&url="+message.getUrl();
@@ -40,12 +37,6 @@ public class MessageSendJob extends Base {
         HttpResponse response = httpClient.execute(httpGet);
     }
 
-    /**
-     * get success
-     * @param url
-     * @param message
-     * @throws IOException
-     */
     private static void successMessage(String url,Message message) throws IOException {
         // send success
         if(pageRequest(url,message)){
@@ -56,6 +47,13 @@ public class MessageSendJob extends Base {
         failMessage(url,message);
     }
 
+    /**
+     * 推送消息
+     * @param url
+     * @param message
+     * @return
+     * @throws IOException
+     */
     private static Boolean pageRequest(String url,Message message) throws IOException {
         String content = URLEncoder.encode(message.getContent(),"UTF-8");
         url=url+"?"+"appToken="+message.getAppToken()+"&content="+content+"&uid="+message.getUids()[0];
@@ -65,6 +63,12 @@ public class MessageSendJob extends Base {
         return isSuccess(response);
     }
 
+    /**
+     * 判断消息是否发送成功
+     * @param response
+     * @return
+     * @throws IOException
+     */
     private static boolean isSuccess(HttpResponse response) throws IOException {
         String content = EntityUtils.toString(response.getEntity(),"UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(content);

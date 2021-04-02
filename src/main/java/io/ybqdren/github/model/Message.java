@@ -11,7 +11,7 @@ public class Message implements Serializable {
     /**
      * app token
      */
-    private String appToken = "AT_R3oG2VwZ7vtaksqD6XEhXP5Fkgqwy6uK";
+    private String appToken;
 
     /**
      * message content
@@ -41,7 +41,7 @@ public class Message implements Serializable {
     /**
      * messagge url
      */
-    private String url;
+    private String url = "https://github.com/ybqdren/RPG66-LoginBot";
 
     public String getAppToken() {
         return appToken;

@@ -14,56 +14,55 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 /**
- * Created by Zhao Wen on 2021/2/21
+ *  Created by Zhao Wen on 2021/2/21
  *
- * 找到鲜花信息不更新的缘故了：
- * 获取的鲜花信息是登录时抓的 肯定有延时性
- *
- * 应这样修改：
- * 登录 -> 判断是否登录成功 记录当前获得的鲜花数 -> 在此请求用户信息页 获取鲜花数 -> 将两个进行比较 -> 如果上次登录时间非今天
- * 且鲜花数 新请求大于原来数目 —> 登录成功
+ *  疑似领取鲜花的url        http://c2.cgyouxi.com/website/orange/js/login_sign/login_sign.js?v=20170621
+ *  疑似检查用户登录信息      http://www.66rpg.com/ajax/LoginSign/user_login_set.json
+ *  每日任务                http://www.66rpg.com/ActiveSystem/index/get_today_task_lists
  */
 
 public class LoginJob extends Base {
     public static void run(RequestHeaderModel requestHeaderModel, Message message) throws IOException, InterruptedException {
+        // 第一次请求url
         String loginUrl = "http://c2.cgyouxi.com/website/orange/js/login_sign/login_sign.js?v=20170621";
-        String userUrl = "http://www.66rpg.com/home";
-        String friendUrl = "http://www.66rpg.com/friend/";
 
-        // 疑似领取鲜花的url http://c2.cgyouxi.com/website/orange/js/login_sign/login_sign.js?v=20170621
-        // 疑似检查用户登录信息 http://www.66rpg.com/ajax/LoginSign/user_login_set.json
-        // 每日任务 http://www.66rpg.com/ActiveSystem/index/get_today_task_lists
+        // 第二次请求url 获取当前用户鲜花数目信息
+        String userUrl = "http://www.66rpg.com/home";
+
+        // 第三次请求url 获取当前用户登录信息
+        String friendUrl = "http://www.66rpg.com/friend/";
 
         UserInforModel userInforModel = null;
         ResponseMessageModel responseMessageModelLogin = null;
         ResponseMessageModel requestHeaderModelUserInfo = null;
-        ResponseMessageModel responseMessageModel_02 = null;
+        ResponseMessageModel responseMessageModelFriend = null;
 
-        // get tow page info
-        // login
+        // 进行登录
         responseMessageModelLogin = pageRequest(loginUrl,requestHeaderModel);
 
-        Thread.sleep(1000);
+        // 第一次请求与第二次请求相隔 10s
+        Thread.sleep(10000);
 
-        // get user information
+        // 获取用户信息
         requestHeaderModelUserInfo = pageRequest(userUrl,requestHeaderModel);
         System.out.println(requestHeaderModelUserInfo.getRecContent());
         userInforModel = getUserInfo(requestHeaderModelUserInfo);
 
         if(!("".equals(userInforModel.getUid())) && userInforModel.getUid()!=null){
-            responseMessageModel_02 = pageRequest(friendUrl+userInforModel.getUid(),requestHeaderModel);
-            if( responseMessageModel_02.getSendStatus() == 200){
+            responseMessageModelFriend = pageRequest(friendUrl+userInforModel.getUid(),requestHeaderModel);
+            if( responseMessageModelFriend.getSendStatus() == 200){
                 userInforModel.setUrl(message.getUrl());
-                userInforModel = getUerInforOther(userInforModel,responseMessageModel_02.getRecContent());
+                userInforModel = getUerInforOther(userInforModel,responseMessageModelFriend.getRecContent());
             }
         }else {
             userInforModel = null;
         }
+
         sendMessage(userInforModel,message);
     }
 
     /**
-     *
+     * 发送消息
      * @param userInforModel
      */
     private static void sendMessage(UserInforModel userInforModel, Message message) throws IOException {
@@ -75,7 +74,7 @@ public class LoginJob extends Base {
     }
 
     /**
-     * get user lastime
+     * 获取用户上次登录信息
      * @param userInforModel
      * @param resContent
      * @return
@@ -131,10 +130,6 @@ public class LoginJob extends Base {
         HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("Cookie",requestHeaderModel.getCookie());
         httpGet.addHeader("User-Agent",requestHeaderModel.getUserAgent());
-        httpGet.addHeader("Cache-Control",requestHeaderModel.getCacheControl());
-        httpGet.addHeader("Pragma",requestHeaderModel.getPragma());
-        httpGet.addHeader("Upgrade-Insecure-Requests",requestHeaderModel.getUpgradeInsecureRequests());
-        httpGet.addHeader("Connection",requestHeaderModel.getConnection());
 
         HttpClient httpClient = HttpClients.custom().build();
         HttpResponse response = httpClient.execute(httpGet);

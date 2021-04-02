@@ -27,6 +27,7 @@ jobs:
       - name: Build with Maven
         env:
           COOKIE: ${{ secrets.COOKIE }}
-          SCKEY: ${{ secrets.SCKEY }}
+          REQUESTS_INFO: ${{ secrets.REQUESTS_INFO }}
+          WXPUSHER_CONFIG: ${{ secrets.WXPUSHER_CONFIG }}
         run: |
-          mvn compile exec:java -Dexec.mainClass="io.ybqdren.github.Main" -Dexec.args="${COOKIE} ${SCKEY}"
+          mvn compile exec:java -Dexec.mainClass="io.ybqdren.github.Main" -Dexec.args="${COOKIE} ${REQUESTS_INFO} ${WXPUSHER_CONFIG}"
